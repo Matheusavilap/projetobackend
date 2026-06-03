@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    command: redis-server --appendonly yes
+
+  app:
+    build: .
+    ports: ["3000:3000", "3001:3001"]
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - TCP_PORT=3001
+      - JWT_SECRET=dev_secret_key
+    depends_on: [redis]
