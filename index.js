@@ -5,11 +5,13 @@ const TcpGateway = require('./src/gateway/TcpServer');
 const locationRoutes = require('./src/api/routes');
 
 const app = express();
+
+// Middlewares globais
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// Rotas
+// Rotas da API (aqui estava o erro: agora 'locationRoutes' é garantidamente uma função router)
 app.use('/api/v1', locationRoutes);
 
 // Health check
@@ -19,7 +21,9 @@ const API_PORT = process.env.API_PORT || 3000;
 const TCP_PORT = process.env.TCP_PORT || 9000;
 
 // Inicia API REST
-app.listen(API_PORT, () => console.log(`🌐 API REST em http://localhost:${API_PORT}`));
+app.listen(API_PORT, () => {
+  console.log(`🌐 API REST em http://localhost:${API_PORT}`);
+});
 
 // Inicia Gateway TCP
 new TcpGateway(TCP_PORT).start();

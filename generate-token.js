@@ -1,9 +1,8 @@
-// generate-token.js
-require('dotenv').config(); // ← Carrega o .env automaticamente!
+// gere-token.js (execute com node gere-token.js)
 const jwt = require('jsonwebtoken');
-
-const SECRET = process.env.JWT_SECRET || 'super_secret_key_change_in_prod';
-
-const token = jwt.sign({ id: 'user_123' }, SECRET, { expiresIn: '1h' });
-console.log('✅ Token válido para este servidor:');
-console.log(token);
+const payload = {
+  userId: 'usr_123',
+  allowedDevices: ['0a3f73', '1b2c3d']
+};
+const token = jwt.sign(payload, 'fallback-secret-do-dev', { expiresIn: '1h' });
+console.log('TOKEN:', token);
