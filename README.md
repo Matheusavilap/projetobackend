@@ -103,13 +103,23 @@ npm install
 
 # Inicie o servidor
 npm start
-
+ 
 
 O servidor iniciará dois serviços simultâneos:
 
 Gateway TCP: localhost:9000 (recebe pacotes dos dispositivos)
 
 API REST: http://localhost:3000 (endpoint para frontend)
+
+#Em outro terminal inicie  o teste manual:
+
+npm run test:manual
+
+# Rode o teste completo em outro terminal do sistema para obter os resultados esperados
+
+.\teste-completo.ps1
+
+--------------------------------------------------------------------------------------------
 
 🔐 Autenticação e Autorização
 Modelo Implementado: JWT com Escopo por Dispositivo
@@ -150,6 +160,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 401 Unauthorized - Token inválido, expirado ou ausente
 403 Forbidden - Token válido, mas usuário não tem permissão para este dispositivo
 404 Not Found - Dispositivo não existe ou ainda não enviou dados
+
+
+
 Vantagens desta Abordagem
 Stateless: Não requer sessão no servidor, escalabilidade horizontal
 Seguro: Token assinado, expiração automática, sem compartilhamento de chaves
@@ -179,8 +192,6 @@ Testes Automatizados
 # Executa todos os testes com cobertura
 npm test
 
-# Executa em modo watch (desenvolvimento)
-npm run test:watch
 
 Validação Manual (PowerShell)
 1. Enviar Ping + Localização via TCP
