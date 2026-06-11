@@ -1,7 +1,9 @@
 {
   "name": "tracker-gateway",
   "version": "1.0.0",
+  "author": "Matheus Avila",
   "main": "index.js",
+  "description": "Sistema para rastreadores GPS via protocolo binário TCP, com parser de pacotes hexadecimais, handshake automático e API REST protegida por JWT com autorização por dispositivo.",
   "scripts": {
   "start": "node index.js",
   "dev": "nodemon index.js",

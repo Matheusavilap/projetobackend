@@ -2,89 +2,6 @@
 
 Sistema de ingestão em tempo real para rastreadores GPS via protocolo binário TCP, com parser de pacotes hexadecimais, handshake automático e API REST protegida por JWT com autorização por dispositivo.
 
-## 📐 Arquitetura
-┌─────────────────┐
-│ Dispositivo │
-│ GPS (SFT9001) │
-└────────┬────────┘
-│ TCP (Hex Binário)
-│ Porta 9000
-▼
-┌─────────────────────────────────────────┐
-│ Gateway TCP (Node.js) │
-│ ┌───────────────────────────────────┐ │
-│ │ Buffer Parser (50F7...73C4) │ │
-│ │ - Fragmentação de stream │ │
-│ │ - Validação de header/footer │ │
-│ └──────────────┬────────────────────┘ │
-│ │ │
-│ ┌────────────┴────────────┐ │
-│ ▼ ▼ │
-│ [Ping 01] [Localização 02]│
-│ │ │ │
-│ ▼ ▼ │
-│ ACK Automático Parser 24 bytes │
-│ (50F70173C4) - Epoch │
-│ - Direção/100 │
-│ - Hodômetro │
-│ - Horímetro │
-│ - Flags (bits) │
-│ - Velocidade │
-│ - Lat/Lon c/ sinal │
-└────────────────────────┬────────────────┘
-│
-▼
-┌─────────────────────┐
-│ LocationStore │
-│ (FIFO em memória) │
-│ Map<deviceId, │
-│ location> │
-└──────────┬──────────┘
-│
-▼
-┌─────────────────────┐
-│ API REST │
-│ Express + JWT │
-│ Porta 3000 │
-└──────────┬──────────┘
-│
-▼
-┌─────────────────────┐
-│ Frontend │
-│ (React/Vue/etc) │
-└─────────────────────┘
-
-## 🛠️ Tecnologias Utilizadas
-
-- **Node.js** - Runtime assíncrono ideal para I/O de rede
-- **Express** - Framework HTTP para API REST
-- **net (nativo)** - Servidor TCP para gateway binário
-- **jsonwebtoken** - Autenticação stateless com JWT
-- **helmet** - Segurança HTTP headers
-- **cors** - Cross-Origin Resource Sharing
-- **Jest + Supertest** - Testes automatizados
-
-## 📁 Estrutura de Pastas
-tracker-gateway/
-├── index.js # Entry point: inicia API + Gateway TCP
-├── package.json # Dependências e scripts
-├── README.md # Esta documentação
-├── .gitignore # Arquivos ignorados no versionamento
-├── src/
-│ ├── gateway/
-│ │ ├── TcpServer.js # Servidor TCP com buffer e ACK automático
-│ │ └── ProtocolParser.js # Parser binário + decodificação de pacotes
-│ ├── services/
-│ │ └── LocationStore.js # Storage FIFO em memória (Map)
-│ └── api/
-│ ├── routes.js # Rotas da API (login + location)
-│ └── middleware.js # Autenticação JWT + autorização por device
-├── tests/
-│ ├── parser.test.js # Testes unitários do parser binário
-│ └── api.test.js # Testes de integração da API
-└── validation-report-*.json # Relatórios de validação automática
-
-
 ## 🚀 Instalação
 
 ### Pré-requisitos
@@ -120,6 +37,85 @@ npm run test:manual
 .\teste-completo.ps1
 
 --------------------------------------------------------------------------------------------
+
+
+
+
+## 📐 Arquitetura
+
+│ Dispositivo 
+│ GPS (SFT9001) 
+
+│ TCP (Hex Binário)
+│ Porta 9000
+▼
+
+│ Gateway TCP (Node.js)                    
+│ │ Buffer Parser (50F7...73C4) 
+│ │ - Fragmentação de stream 
+│ │ - Validação de header/footer 
+
+
+│ [Ping 01] [Localização 02]│
+│ │ │ 
+│ ▼ ▼ 
+│ ACK Automático Parser 24 bytes 
+│ (50F70173C4) - Epoch 
+│ - Direção/100 
+│ - Hodômetro 
+│ - Horímetro 
+│ - Flags (bits) 
+│ - Velocidade 
+│ - Lat/Lon c/ sinal 
+
+│
+│ LocationStore 
+│ (FIFO em memória) 
+│ Map<deviceId, 
+│ location> 
+
+│
+▼
+
+│ API REST 
+│ Express + JWT 
+│ Porta 3000 
+
+│
+▼
+
+│ Frontend 
+│ (React/Vue/etc) 
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Node.js** - Runtime assíncrono ideal para I/O de rede
+- **Express** - Framework HTTP para API REST
+- **net (nativo)** - Servidor TCP para gateway binário
+- **jsonwebtoken** - Autenticação stateless com JWT
+- **helmet** - Segurança HTTP headers
+- **cors** - Cross-Origin Resource Sharing
+- **Jest + Supertest** - Testes automatizados
+
+## 📁 Estrutura de Pastas
+tracker-gateway/
+├── index.js # Entry point: inicia API + Gateway TCP
+├── package.json # Dependências e scripts
+├── README.md # Esta documentação
+├── .gitignore # Arquivos ignorados no versionamento
+├── src/
+│ ├── gateway/
+│ │ ├── TcpServer.js # Servidor TCP com buffer e ACK automático
+│ │ └── ProtocolParser.js # Parser binário + decodificação de pacotes
+│ ├── services/
+│ │ └── LocationStore.js # Storage FIFO em memória (Map)
+│ └── api/
+│ ├── routes.js # Rotas da API (login + location)
+│ └── middleware.js # Autenticação JWT + autorização por device
+├── tests/
+│ ├── parser.test.js # Testes unitários do parser binário
+│ └── api.test.js # Testes de integração da API
+└── validation-report-*.json # Relatórios de validação automática
 
 🔐 Autenticação e Autorização
 Modelo Implementado: JWT com Escopo por Dispositivo
@@ -163,7 +159,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 
 
-Vantagens desta Abordagem
+Vantagens 
 Stateless: Não requer sessão no servidor, escalabilidade horizontal
 Seguro: Token assinado, expiração automática, sem compartilhamento de chaves
 Granular: Controle por dispositivo individual
@@ -290,33 +286,18 @@ const loc = await client.hGet('locations', deviceId);
 
 Benefícios: Persistência, TTL automático, escalabilidade horizontal, pub/sub para tempo real.
 
-
-2. Worker Pool para Alto Throughput
-Atual: Parsing síncrono no event loop
-Proposta: Worker threads ou BullMQ para processamento assíncrono de dezenas de milhões de pacotes/dia.
-
-
-3. Métricas e Observabilidade
+2. Métricas e Observabilidade
 Proposta:
 Prometheus + Grafana para monitoramento
 Logs estruturados (Winston/Pino)
 Tracing distribuído (OpenTelemetry)
 Alertas para latência, erros, conexões ativas
 
-4. WebSocket para Frontend em Tempo Real
-Proposta: Endpoint WebSocket que notifica frontend sobre novas localizações sem polling.
 
-5. Rate Limiting e DDoS Protection
+3. Rate Limiting e DDoS Protection
 Proposta: express-rate-limit + Cloudflare/AWS WAF para proteger contra abuso.
 
-6. Refresh Tokens e Revogação
-Atual: JWT com expiração fixa (1h)
-Proposta: Implementar refresh tokens + blacklist para revogação imediata em caso de comprometimento.
-
-7. Validação de Schema com Zod/Joi
-Proposta: Validar payload de login, device_id, e respostas de API para prevenir injection e erros de tipo.
-
-8. CI/CD Pipeline
+4. CI/CD Pipeline
 Proposta: GitHub Actions para:
 Rodar testes automaticamente em cada push
 Build e deploy automático
